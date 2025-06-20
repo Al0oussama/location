@@ -1,32 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Location Redirect</title>
+  <title>Submitting Location...</title>
+  <script>
+    async function sendLocation() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+
+      if (!id) {
+        console.error("Missing ID in URL");
+        window.close();
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          try {
+            await fetch("https://task-management-jkpm.onrender.com/submit-location", {
+
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ latitude: lat, longitude: lon, id })
+            });
+          } catch (err) {
+            console.error("Failed to send location:", err);
+          } finally {
+            window.close();
+          }
+        },
+        (error) => {
+          console.error("Location permission denied:", error);
+          window.close();
+        }
+      );
+    }
+
+    window.onload = sendLocation;
+  </script>
 </head>
 <body>
-  <script>
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-
-        try {
-          await fetch("https://task-management-jkpm.onrender.com/submit-location", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ latitude: lat, longitude: lon })
-          });
-
-          // Redirect to a result endpoint that returns pure JSON
-          window.location.href = "https://task-management-jkpm.onrender.com/result";
-        } catch (err) {
-          window.location.href = "https://task-management-jkpm.onrender.com/result?error=1";
-        }
-      },
-      (error) => {
-        window.location.href = "https://task-management-jkpm.onrender.com/result?error=1";
-      }
-    );
-  </script>
+  <p>Submitting your location...</p>
 </body>
 </html>

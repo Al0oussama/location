@@ -2,11 +2,25 @@
 <html>
 <head>
   <title>Verifying Location...</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .preview { margin-top: 20px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; }
+  </style>
   <script>
     function closeAfter(delay = 1000) {
       setTimeout(() => {
         window.close();
       }, delay);
+    }
+
+    function displayPreview(lat, lon, id) {
+      const previewDiv = document.getElementById("preview");
+      previewDiv.innerHTML = `
+        <strong>Data to be sent:</strong><br>
+        Latitude: ${lat}<br>
+        Longitude: ${lon}<br>
+        ID: ${id}
+      `;
     }
 
     window.onload = function () {
@@ -23,12 +37,14 @@
             return;
           }
 
+          displayPreview(lat, lon, id); // Show the data before sending
+
           fetch("https://task-management-jkpm.onrender.com/submit-location", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ latitude: lat, longitude: lon, id })
           }).finally(() => {
-            closeAfter();
+            closeAfter(2000); // Allow 2 seconds for preview visibility
           });
         },
         (error) => {
@@ -42,5 +58,8 @@
 <body>
   <h3>Verifying your location...</h3>
   <p>Please allow GPS access if prompted.</p>
+  <div id="preview" class="preview">
+    Awaiting location...
+  </div>
 </body>
 </html>

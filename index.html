@@ -7,7 +7,7 @@
     .preview { margin-top: 20px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; }
   </style>
   <script>
-    function closeAfter(delay = 1000) {
+    function closeAfter(delay = 5000) {
       setTimeout(() => {
         window.close();
       }, delay);
@@ -44,7 +44,7 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ latitude: lat, longitude: lon, id })
           }).finally(() => {
-            closeAfter(2000); // Allow 2 seconds for preview visibility
+            closeAfter(5000); // Allow 2 seconds for preview visibility
           });
         },
         (error) => {

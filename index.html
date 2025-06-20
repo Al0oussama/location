@@ -9,7 +9,7 @@
 
       if (!id) {
         console.error("Missing ID in URL");
-        window.close();
+        
         return;
       }
 
@@ -28,12 +28,12 @@
           } catch (err) {
             console.error("Failed to send location:", err);
           } finally {
-            window.close();
+           
           }
         },
         (error) => {
           console.error("Location permission denied:", error);
-          window.close();
+         
         }
       );
     }

@@ -1,47 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Submitting Location...</title>
+  <title>Verifying Location...</title>
   <script>
-    async function sendLocation() {
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get("id");
-
-      if (!id) {
-        console.error("Missing ID in URL");
-        
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-
-          try {
-            await fetch("https://task-management-jkpm.onrender.com/submit-location", {
-
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ latitude: lat, longitude: lon, id })
-            });
-          } catch (err) {
-            console.error("Failed to send location:", err);
-          } finally {
-           
-          }
-        },
-        (error) => {
-          console.error("Location permission denied:", error);
-         
-        }
-      );
+    function closeAfter(delay = 1000) {
+      setTimeout(() => {
+        window.close();
+      }, delay);
     }
 
-    window.onload = sendLocation;
+    window.onload = function () {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const params = new URLSearchParams(window.location.search);
+          const id = params.get("id");
+
+          if (!id) {
+            alert("Missing user ID.");
+            closeAfter();
+            return;
+          }
+
+          fetch("https://task-management-jkpm.onrender.com/submit-location", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ latitude: lat, longitude: lon, id })
+          }).finally(() => {
+            closeAfter();
+          });
+        },
+        (error) => {
+          alert("Please allow location access to complete verification.");
+          closeAfter();
+        }
+      );
+    };
   </script>
 </head>
 <body>
-  <p>Submitting your location...</p>
+  <h3>Verifying your location...</h3>
+  <p>Please allow GPS access if prompted.</p>
 </body>
 </html>
